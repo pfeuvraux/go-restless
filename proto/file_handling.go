@@ -2,10 +2,12 @@ package proto
 
 /*
 #include "crypto.h"
+#include <stdlib.h>
 */
 import "C"
 import (
 	"fmt"
+	"unsafe"
 )
 
 var MAX_CHUNK_SIZE int = 1000
@@ -38,10 +40,9 @@ func (f *File) Encrypt() {
 
 	for i := 0; i < len(f.chunks); i++ {
 		// b64chk := base64.StdEncoding.EncodeToString(f.chunks[i])
-		cChunk := C.CString(string(f.chunks[i]))
-		var cEncryptedChunk *C.char = C.encrypt_chunk(cChunk)
+		var cEncryptedChunk *C.char = C.encrypt_chunk(C.CString(string(f.chunks[i])))
 		encryptedChunk := C.GoString(cEncryptedChunk)
-		C.free_mem(cEncryptedChunk)
+		C.free(unsafe.Pointer(cEncryptedChunk))
 
 		fmt.Printf("%s", encryptedChunk)
 	}
