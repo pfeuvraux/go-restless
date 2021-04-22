@@ -11,8 +11,8 @@ type LoginArgs struct {
 }
 
 type FileUpload struct {
-	dest string `arg:"required"`
-	src  string `arg:"required"`
+	Dest string `arg:"required"`
+	Src  string `arg:"required"`
 }
 
 type Args struct {
