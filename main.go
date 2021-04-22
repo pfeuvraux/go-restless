@@ -17,6 +17,8 @@ func main() {
 		cmd.RegisterUser(cliArgs)
 	case cliArgs.Login != nil:
 		cmd.UserSignIn()
+	case cliArgs.Upload != nil:
+		cmd.UploadHandler()
 	default:
 		log.Fatal("Unrecognized command.")
 	}
