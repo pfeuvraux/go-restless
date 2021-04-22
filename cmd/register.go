@@ -15,12 +15,6 @@ import (
 	"github.com/pfeuvraux/go-restless/internal/args"
 )
 
-// Located here but used in main.go
-type RegisterArgs struct {
-	Username string `arg:"required"`
-	Password string `arg:"required"`
-}
-
 type RegisterUserAttributes struct {
 	Username     string `json:"username"`
 	Srp_verifier string `json:"srp_verifier"`
