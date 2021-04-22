@@ -4,7 +4,9 @@ package proto
 #include "crypto.h"
 */
 import "C"
-import "fmt"
+import (
+	"fmt"
+)
 
 var MAX_CHUNK_SIZE int = 1000
 
@@ -27,7 +29,6 @@ func SplitFile(file []byte) [][]byte {
 }
 
 func NewFileHandler(file []byte) *File {
-
 	return &File{
 		chunks: SplitFile(file),
 	}
@@ -38,8 +39,10 @@ func (f *File) Encrypt() {
 	for i := 0; i < len(f.chunks); i++ {
 		// b64chk := base64.StdEncoding.EncodeToString(f.chunks[i])
 		cChunk := C.CString(string(f.chunks[i]))
-		encrypted_chunk := C.encrypt_chunk(cChunk)
-		fmt.Println(C.GoString(encrypted_chunk))
-	}
+		var cEncryptedChunk *C.char = C.encrypt_chunk(cChunk)
+		encryptedChunk := C.GoString(cEncryptedChunk)
+		C.free_mem(cEncryptedChunk)
 
+		fmt.Printf("%s", encryptedChunk)
+	}
 }
