@@ -21,7 +21,7 @@ func UploadHandler(host string, port string, file *args.FileUpload) {
 	defer fd.Close()
 
 	fileBuffer, _ := ioutil.ReadAll(fd)
-	ciphertext := proto.NewFileHandler(fileBuffer)
-	ciphertext.Encrypt()
+	ciphertext := proto.NewFileUploader(fileBuffer)
+	ciphertext.Upload()
 
 }

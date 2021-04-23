@@ -30,13 +30,13 @@ func SplitFile(file []byte) [][]byte {
 	return chunks
 }
 
-func NewFileHandler(file []byte) *File {
+func NewFileUploader(file []byte) *File {
 	return &File{
 		chunks: SplitFile(file),
 	}
 }
 
-func (f *File) Encrypt() {
+func (f *File) Upload() {
 
 	for i := 0; i < len(f.chunks); i++ {
 		// b64chk := base64.StdEncoding.EncodeToString(f.chunks[i])
