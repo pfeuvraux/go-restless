@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -12,7 +13,11 @@ import (
 
 func UploadHandler(u *args.Args) {
 
-	config.Parse(u.ConfigPath)
+	config, err := config.Parse(u.ConfigPath)
+	fmt.Println(config)
+	if err != nil {
+		log.Fatal("Couldn't parse configuration file")
+	}
 
 	if _, err := os.Stat(u.Upload.Src); err != nil {
 		log.Fatalln("File doesn't exist.")

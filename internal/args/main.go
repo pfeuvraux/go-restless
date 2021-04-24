@@ -1,8 +1,8 @@
 package args
 
 type FileUpload struct {
-	Dest string `arg:"required"`
 	Src  string `arg:"required"`
+	Dest string `arg:"required"`
 }
 
 type RegisterArgs struct {
