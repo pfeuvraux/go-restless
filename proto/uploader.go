@@ -1,19 +1,11 @@
 package proto
 
-/*
-#include "crypto.h"
-#include <stdlib.h>
-*/
-import "C"
-import (
-	"fmt"
-	"unsafe"
-)
+import "fmt"
 
 var MAX_CHUNK_SIZE int = 1000
 
 type File struct {
-	chunks [][]byte
+	Chunks [][]byte
 }
 
 func SplitFile(file []byte) [][]byte {
@@ -31,19 +23,17 @@ func SplitFile(file []byte) [][]byte {
 }
 
 func NewFileUploader(file []byte) *File {
+	toto := SplitFile(file)
 	return &File{
-		chunks: SplitFile(file),
+		Chunks: toto,
 	}
 }
 
 func (f *File) Upload() {
+	//key := derive_key([]byte(password))
+	//fmt.Println(key)
 
-	for i := 0; i < len(f.chunks); i++ {
-		// b64chk := base64.StdEncoding.EncodeToString(f.chunks[i])
-		var cEncryptedChunk *C.char = C.encrypt_chunk(C.CString(string(f.chunks[i])))
-		encryptedChunk := C.GoString(cEncryptedChunk)
-		C.free(unsafe.Pointer(cEncryptedChunk))
-
-		fmt.Printf("%s", encryptedChunk)
+	for i := 0; i < len(f.Chunks); i++ {
+		fmt.Println("tes")
 	}
 }

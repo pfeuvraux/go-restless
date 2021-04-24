@@ -67,10 +67,10 @@ func MakeHttpRequest(user *RegisterUserAttributes, host string, port string) (st
 	return stringifiedBody, resp.StatusCode
 }
 
-func RegisterUser(args *args.Args) {
+func RegisterUser(args *args.RegisterArgs) {
 
-	vkey, salt := computeVerifier(args.Register.Username, args.Register.Password)
-	user := NewUserAttributes(args.Register.Username)
+	vkey, salt := computeVerifier(args.Username, args.Password)
+	user := NewUserAttributes(args.Username)
 	user.SetAttributesFromBytes(salt, vkey)
 
 	resp, statusCode := MakeHttpRequest(user, args.Host, args.Port)

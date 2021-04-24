@@ -15,10 +15,8 @@ func main() {
 	switch {
 	case cliArgs.Register != nil:
 		cmd.RegisterUser(cliArgs)
-	case cliArgs.Login != nil:
-		cmd.UserSignIn()
 	case cliArgs.Upload != nil:
-		cmd.UploadHandler(cliArgs.Host, cliArgs.Port, cliArgs.Upload)
+		cmd.UploadHandler(cliArgs.Upload)
 	default:
 		log.Fatal("Unrecognized command.")
 	}
