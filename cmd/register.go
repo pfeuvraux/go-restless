@@ -67,13 +67,13 @@ func MakeHttpRequest(user *RegisterUserAttributes, host string, port string) (st
 	return stringifiedBody, resp.StatusCode
 }
 
-func RegisterUser(args *args.RegisterArgs) {
+func RegisterUser(args *args.Args) {
 
-	vkey, salt := computeVerifier(args.Username, args.Password)
-	user := NewUserAttributes(args.Username)
+	vkey, salt := computeVerifier(args.Register.Username, args.Register.Password)
+	user := NewUserAttributes(args.Register.Username)
 	user.SetAttributesFromBytes(salt, vkey)
 
-	resp, statusCode := MakeHttpRequest(user, args.Host, args.Port)
+	resp, statusCode := MakeHttpRequest(user, args.Register.Host, args.Register.Port)
 
 	switch statusCode {
 	case 201:

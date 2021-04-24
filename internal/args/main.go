@@ -6,15 +6,15 @@ type FileUpload struct {
 }
 
 type RegisterArgs struct {
-	Username string
-	Password string
-	Host     string
-	Port     string
+	Username string `arg:"required"`
+	Password string `arg:"required"`
+	Host     string `arg:"required"`
+	Port     string `arg:"required"`
 }
 
 type Args struct {
 	Register   *RegisterArgs `arg:"subcommand:register"`
-	Upload     *FileUpload   `arg:"subommand:upload"`
+	Upload     *FileUpload   `arg:"subcommand:upload"`
 	ConfigPath string        `default:"~/.restless/config" env:"CONF_PATH"`
 }
 
