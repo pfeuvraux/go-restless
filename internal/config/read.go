@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -16,7 +15,6 @@ func Parse(path string) ConfigModel {
 	}
 
 	_, err := os.Stat(path)
-	fmt.Println(path)
 	if err != nil {
 		log.Fatal("Couldn't open config file")
 	}

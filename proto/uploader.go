@@ -1,9 +1,6 @@
 package proto
 
-import (
-	"encoding/base64"
-	"fmt"
-)
+import "github.com/pfeuvraux/go-restless/apiclient"
 
 var MAX_CHUNK_SIZE int = 1000
 
@@ -33,11 +30,12 @@ func NewFileUploader(file []byte) *File {
 
 func (f *File) Upload(username string, passwd string, url string) {
 	fileEncryptionKey, _ := DeriveKey([]byte(passwd))
+	apiClient := apiclient.NewApiClient(url, username, passwd)
 
 	for i := 0; i < len(f.Chunks); i++ {
 		chunkEncryptionKey, _ := DeriveKey(fileEncryptionKey)
 
 		encedChunk := Encrypt(f.Chunks[i], chunkEncryptionKey)
-		fmt.Println(base64.StdEncoding.EncodeToString(encedChunk.data))
+		apiClient.SendChunk(encedChunk.data)
 	}
 }
