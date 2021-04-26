@@ -13,12 +13,15 @@ import (
 	"github.com/kong/go-srp"
 	"github.com/mazen160/go-random"
 	"github.com/pfeuvraux/go-restless/internal/args"
+	"github.com/pfeuvraux/go-restless/proto"
 )
 
 type RegisterUserAttributes struct {
 	Username     string `json:"username"`
 	Srp_verifier string `json:"srp_verifier"`
 	Srp_salt     string `json:"srp_salt"`
+	MasterKey    string `json:key_encryption_key`
+	ContentKey   string `json:content_encryption_key`
 }
 
 func NewUserAttributes(username string) *RegisterUserAttributes {
@@ -30,6 +33,15 @@ func NewUserAttributes(username string) *RegisterUserAttributes {
 func (r *RegisterUserAttributes) SetAttributesFromBytes(s []byte, vkey []uint8) {
 	r.Srp_salt = base64.StdEncoding.EncodeToString(s)
 	r.Srp_verifier = base64.RawStdEncoding.EncodeToString(vkey)
+}
+
+func (r *RegisterUserAttributes) GenerateKeys(password string) {
+	kek, saltKek := proto.DeriveKey([]byte(password))
+	cek, saltCek := proto.DeriveKey(kek)
+
+	kekCat := make([]byte, len(kek)+len(saltKek))
+	cekCat := make([]byte, len(cek)+len(saltCek))
+	// write the rest
 }
 
 func computeVerifier(username string, password string) ([]uint8, []byte) {
@@ -72,6 +84,7 @@ func RegisterUser(args *args.Args) {
 	vkey, salt := computeVerifier(args.Register.Username, args.Register.Password)
 	user := NewUserAttributes(args.Register.Username)
 	user.SetAttributesFromBytes(salt, vkey)
+	user.GenerateKeys(args.Register.Password)
 
 	resp, statusCode := MakeHttpRequest(user, args.Register.Host, args.Register.Port)
 
