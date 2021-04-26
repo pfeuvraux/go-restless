@@ -32,12 +32,12 @@ func NewFileUploader(file []byte) *File {
 }
 
 func (f *File) Upload(username string, passwd string, url string) {
-	fileEncryptionKey, _ := derive_key([]byte(passwd))
+	fileEncryptionKey, _ := DeriveKey([]byte(passwd))
 
 	for i := 0; i < len(f.Chunks); i++ {
-		chunkEncryptionKey, _ := derive_key(fileEncryptionKey)
+		chunkEncryptionKey, _ := DeriveKey(fileEncryptionKey)
 
-		encedChunk := encrypt(f.Chunks[i], chunkEncryptionKey)
+		encedChunk := Encrypt(f.Chunks[i], chunkEncryptionKey)
 		fmt.Println(base64.StdEncoding.EncodeToString(encedChunk.data))
 	}
 }

@@ -8,9 +8,13 @@ import (
 	"golang.org/x/crypto/chacha20poly1305"
 )
 
-func derive_key(passphrase []byte) ([]byte, []byte) {
+func Argon2idSaltLen() int {
+	return 8
+}
 
-	salt, _ := random.Bytes(8)
+func DeriveKey(passphrase []byte) ([]byte, []byte) {
+
+	salt, _ := random.Bytes(Argon2idSaltLen())
 	time := 3
 	mem := 32 * 1024
 	threads := 4
@@ -20,7 +24,7 @@ func derive_key(passphrase []byte) ([]byte, []byte) {
 		salt
 }
 
-func encrypt(data []byte, key []byte) *EncryptedData {
+func Encrypt(data []byte, key []byte) *EncryptedData {
 	cipher, err := chacha20poly1305.NewX(key)
 	if err != nil {
 		fmt.Printf("Error while init chacha")
