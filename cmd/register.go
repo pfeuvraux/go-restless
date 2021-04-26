@@ -32,7 +32,7 @@ func NewUserAttributes(username string) *RegisterUserAttributes {
 
 func (r *RegisterUserAttributes) SetAttributesFromBytes(s []byte, vkey []uint8) {
 	r.Srp_salt = base64.StdEncoding.EncodeToString(s)
-	r.Srp_verifier = base64.RawStdEncoding.EncodeToString(vkey)
+	r.Srp_verifier = base64.StdEncoding.EncodeToString(vkey)
 }
 
 func (r *RegisterUserAttributes) GenerateKeys(password string) {
