@@ -12,9 +12,17 @@ func Argon2idSaltLen() int {
 	return 8
 }
 
-func DeriveKey(passphrase []byte) ([]byte, []byte) {
+func DeriveKey(params ...[]byte) ([]byte, []byte) {
 
-	salt, _ := random.Bytes(Argon2idSaltLen())
+	passphrase := params[0]
+	var salt []byte
+
+	if len(params) > 1 {
+		salt = params[1]
+	} else {
+		salt, _ = random.Bytes(Argon2idSaltLen())
+	}
+
 	time := 3
 	mem := 32 * 1024
 	threads := 4
