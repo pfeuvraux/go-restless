@@ -20,8 +20,8 @@ type RegisterUserAttributes struct {
 	Username     string `json:"username"`
 	Srp_verifier string `json:"srp_verifier"`
 	Srp_salt     string `json:"srp_salt"`
-	KekSalt      string `json:"master_salt"`
-	CekKey       string `json:"content_encryption_key"`
+	KekSalt      string `json:"kek_salt"`
+	CekKey       string `json:"cek"`
 }
 
 func NewUserAttributes(username string) *RegisterUserAttributes {
