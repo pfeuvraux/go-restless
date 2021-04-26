@@ -15,7 +15,7 @@ type RegisterArgs struct {
 type Args struct {
 	Register   *RegisterArgs `arg:"subcommand:register"`
 	Upload     *FileUpload   `arg:"subcommand:upload"`
-	ConfigPath string        `default:"~/.restless/config" env:"CONF_PATH"`
+	ConfigPath string        `env:"CONF_PATH"`
 }
 
 func NewArgs() *Args {

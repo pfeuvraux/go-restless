@@ -1,6 +1,9 @@
 package proto
 
-import "fmt"
+import (
+	"encoding/base64"
+	"fmt"
+)
 
 var MAX_CHUNK_SIZE int = 1000
 
@@ -23,17 +26,18 @@ func SplitFile(file []byte) [][]byte {
 }
 
 func NewFileUploader(file []byte) *File {
-	toto := SplitFile(file)
 	return &File{
-		Chunks: toto,
+		Chunks: SplitFile(file),
 	}
 }
 
-func (f *File) Upload() {
-	//key := derive_key([]byte(password))
-	//fmt.Println(key)
+func (f *File) Upload(username string, passwd string, url string) {
+	fileEncryptionKey, _ := derive_key([]byte(passwd))
 
 	for i := 0; i < len(f.Chunks); i++ {
-		fmt.Println("tes")
+		chunkEncryptionKey, _ := derive_key(fileEncryptionKey)
+
+		encedChunk := encrypt(f.Chunks[i], chunkEncryptionKey)
+		fmt.Println(base64.StdEncoding.EncodeToString(encedChunk.data))
 	}
 }

@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -13,11 +12,7 @@ import (
 
 func UploadHandler(u *args.Args) {
 
-	config, err := config.Parse(u.ConfigPath)
-	fmt.Println(config)
-	if err != nil {
-		log.Fatal("Couldn't parse configuration file")
-	}
+	config := config.Parse(u.ConfigPath)
 
 	if _, err := os.Stat(u.Upload.Src); err != nil {
 		log.Fatalln("File doesn't exist.")
@@ -31,5 +26,7 @@ func UploadHandler(u *args.Args) {
 
 	fileBuffer, _ := ioutil.ReadAll(fd)
 	uploader := proto.NewFileUploader(fileBuffer)
-	uploader.Upload()
+
+	url := "http://" + config.Api.Host + ":" + config.Api.Port
+	uploader.Upload(config.Api.Username, config.Api.Password, url)
 }

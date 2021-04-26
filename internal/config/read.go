@@ -1,23 +1,41 @@
 package config
 
 import (
+	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
+
+	"gopkg.in/yaml.v2"
 )
 
-type ConfigData struct {
-	Host     string
-	Port     string
-	Username string
-	token    string
-}
+func Parse(path string) ConfigModel {
+	if path == "" {
+		userHome, _ := os.UserHomeDir()
+		path = userHome + "/.restless/config"
+	}
 
-func Parse(path string) (string, error) {
 	_, err := os.Stat(path)
+	fmt.Println(path)
 	if err != nil {
 		log.Fatal("Couldn't open config file")
 	}
 
-	fd, _ := os.Open(path)
+	fd, err := os.Open(path)
+	if err != nil {
+		log.Fatalf("Error %v", err)
+	}
 
+	configBytes, err := ioutil.ReadAll(fd)
+	if err != nil {
+		log.Fatalf("Error %v", err)
+	}
+
+	configModel := NewConfigModel()
+	err = yaml.Unmarshal(configBytes, &configModel)
+	if err != nil {
+		log.Fatalf("Error: %v", err)
+	}
+
+	return *configModel
 }
