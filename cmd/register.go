@@ -20,8 +20,8 @@ type RegisterUserAttributes struct {
 	Username     string `json:"username"`
 	Srp_verifier string `json:"srp_verifier"`
 	Srp_salt     string `json:"srp_salt"`
-	MasterKey    string `json:key_encryption_key`
-	ContentKey   string `json:content_encryption_key`
+	KekSalt      string `json:"master_salt"`
+	CekKey       string `json:"content_encryption_key"`
 }
 
 func NewUserAttributes(username string) *RegisterUserAttributes {
@@ -36,12 +36,7 @@ func (r *RegisterUserAttributes) SetAttributesFromBytes(s []byte, vkey []uint8) 
 }
 
 func (r *RegisterUserAttributes) GenerateKeys(password string) {
-	kek, saltKek := proto.DeriveKey([]byte(password))
-	cek, saltCek := proto.DeriveKey(kek)
-
-	kekCat := make([]byte, len(kek)+len(saltKek))
-	cekCat := make([]byte, len(cek)+len(saltCek))
-	// write the rest
+	r.KekSalt, r.CekKey = proto.GenUserKeys(password)
 }
 
 func computeVerifier(username string, password string) ([]uint8, []byte) {
