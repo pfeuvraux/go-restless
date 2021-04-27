@@ -10,8 +10,7 @@ import (
 
 	_ "crypto/sha256" // https://github.com/Kong/go-srp/issues/1
 
-	"github.com/kong/go-srp"
-	"github.com/mazen160/go-random"
+	"github.com/HimbeerserverDE/srp"
 	"github.com/pfeuvraux/go-restless/internal/args"
 	"github.com/pfeuvraux/go-restless/proto"
 )
@@ -41,13 +40,10 @@ func (r *RegisterUserAttributes) GenerateKeys(password string) {
 
 func computeVerifier(username string, password string) ([]uint8, []byte) {
 
-	salt, err := random.Bytes(4)
+	salt, verifier, err := srp.NewClient([]byte(username), []byte(password))
 	if err != nil {
-		log.Fatal("Error while generating salt...")
+		panic(err)
 	}
-
-	srp_params := srp.GetParams(4096)
-	verifier := srp.ComputeVerifier(srp_params, salt, []byte(username), []byte(password))
 
 	return verifier, salt
 }

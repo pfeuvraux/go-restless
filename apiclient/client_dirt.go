@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-func SrpSaltFromServer(url string, username string) []byte {
+func SrpSaltFromServer(url string, username string) string {
 
 	// get SRP salt before anything else
 	type SrpInitRq struct {
@@ -47,19 +47,26 @@ func SrpSaltFromServer(url string, username string) []byte {
 	if err != nil {
 		panic(err)
 	}
-	return []byte(res.Salt)
+	return res.Salt
 }
 
-func SrpAToServer(url string, username string, A string) string {
+func SrpAToServer(url string, username string, A string) (string, string) {
 
-	type SrpAToServerRq struct {
-		Username string `json:"username"`
-		A        string `json:"srp_params"`
+	type SrpParamsRq struct {
+		A string `json:"srpA"`
 	}
 
+	type SrpAToServerRq struct {
+		Username  string      `json:"username"`
+		SrpParams SrpParamsRq `json:"srp_params"`
+	}
+
+	srpParams := SrpParamsRq{
+		A: A,
+	}
 	jsonPayload, err := json.Marshal(&SrpAToServerRq{
-		Username: username,
-		A:        A,
+		Username:  username,
+		SrpParams: srpParams,
 	})
 	if err != nil {
 		panic(err)
@@ -83,6 +90,7 @@ func SrpAToServer(url string, username string, A string) string {
 
 	type SrpBFromServer struct {
 		B string
+		s string
 	}
 
 	res := &SrpBFromServer{}
@@ -91,16 +99,15 @@ func SrpAToServer(url string, username string, A string) string {
 		panic(err)
 	}
 
-	return res.B
+	return res.B, res.s
 
 }
 
-func M1ToServer(url string, username string, M1 string, srpA string, secret string) []byte {
+func M1ToServer(url string, username string, M1 string, srpA string) string {
 
 	type SrpParamsRq struct {
-		M1     string `json:"M1"`
-		SrpA   string `json:"srpA"`
-		Secret string `json:"secret"`
+		M1   string `json:"M1"`
+		SrpA string `json:"srpA"`
 	}
 
 	type SrpAToServerRq struct {
@@ -109,9 +116,8 @@ func M1ToServer(url string, username string, M1 string, srpA string, secret stri
 	}
 
 	srpParams := SrpParamsRq{
-		M1:     M1,
-		SrpA:   srpA,
-		Secret: secret,
+		M1:   M1,
+		SrpA: srpA,
 	}
 
 	jsonPayload, err := json.Marshal(&SrpAToServerRq{
@@ -148,5 +154,5 @@ func M1ToServer(url string, username string, M1 string, srpA string, secret stri
 		panic(err)
 	}
 
-	return []byte(res.M2)
+	return res.M2
 }

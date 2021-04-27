@@ -1,10 +1,11 @@
 package apiclient
 
 import (
+	"bytes"
 	"encoding/base64"
 	"fmt"
 
-	"github.com/kong/go-srp"
+	"github.com/HimbeerserverDE/srp"
 )
 
 type ApiClient struct {
@@ -18,25 +19,30 @@ func NewApiClient(url string, u string, p string) *ApiClient {
 		Url: url,
 	}
 
-	srpParams := srp.GetParams(4096)
-	srpSecret := srp.GenKey()
-	srpSecret_B64 := base64.StdEncoding.EncodeToString(srpSecret)
-	fmt.Println(srpSecret_B64)
+	A, a, err := srp.InitiateHandshake()
+	if err != nil {
+		panic(err)
+	}
+	A_b64 := base64.StdEncoding.EncodeToString(A)
 
-	srpSalt := SrpSaltFromServer(url, u)
-	srpClient := srp.NewClient(srpParams, srpSalt, []byte(u), []byte(p), srpSecret)
+	B_b64, s_b64 := SrpAToServer(url, u, A_b64)
+	B, _ := base64.StdEncoding.DecodeString(B_b64)
+	s, _ := base64.StdEncoding.DecodeString(s_b64)
 
-	srpA := srpClient.ComputeA()
-	srpA_B64 := base64.StdEncoding.EncodeToString(srpA)
+	K, err := srp.CompleteHandshake(A, a, []byte(u), []byte(p), s, B)
+	if err != nil {
+		panic(err)
+	}
+	clientProof := srp.Hash(K)
+	clientProof_b64 := base64.StdEncoding.EncodeToString(clientProof)
+	fmt.Println(clientProof_b64)
 
-	srpB_B64 := SrpAToServer(url, u, srpA_B64)
-	srpB, _ := base64.StdEncoding.DecodeString(srpB_B64)
+	M2_b64 := M1ToServer(url, u, clientProof_b64, A_b64)
+	M2, _ := base64.StdEncoding.DecodeString(M2_b64)
 
-	srpClient.SetB(srpB)
-	srpM1 := srpClient.ComputeM1()
-	srpM1_B64 := base64.StdEncoding.EncodeToString(srpM1)
-
-	M1ToServer(url, u, srpM1_B64, srpA_B64, srpSecret_B64)
+	if !bytes.Equal(M2, K) {
+		panic("Doesn't server and client prooves don't match.")
+	}
 
 	return ApiObj
 }
