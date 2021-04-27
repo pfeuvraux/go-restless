@@ -46,7 +46,7 @@ func computeVerifier(username string, password string) ([]uint8, []byte) {
 		log.Fatal("Error while generating salt...")
 	}
 
-	srp_params := srp.GetParams(2048)
+	srp_params := srp.GetParams(4096)
 	verifier := srp.ComputeVerifier(srp_params, salt, []byte(username), []byte(password))
 
 	return verifier, salt
